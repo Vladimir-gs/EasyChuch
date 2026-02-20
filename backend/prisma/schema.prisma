@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TREASURER
+  MEMBER
+}
+
+enum IncomeCategory {
+  TITHES
+  OFFERINGS
+  DONATIONS
+  EVENTS
+}
+
+enum ExpenseCategory {
+  UTILITIES
+  MAINTENANCE
+  SALARIES
+  EVENTS
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  incomes   Income[]
+  expenses  Expense[]
+}
+
+model Member {
+  id         String   @id @default(cuid())
+  name       String
+  email      String   @unique
+  phone      String?
+  address    String?
+  role       Role     @default(MEMBER)
+  joinedDate DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Income {
+  id          String         @id @default(cuid())
+  amount      Float
+  category    IncomeCategory
+  description String?
+  date        DateTime
+  createdById String
+  createdBy   User           @relation(fields: [createdById], references: [id])
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Expense {
+  id          String          @id @default(cuid())
+  amount      Float
+  category    ExpenseCategory
+  description String?
+  date        DateTime
+  createdById String
+  createdBy   User            @relation(fields: [createdById], references: [id])
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
