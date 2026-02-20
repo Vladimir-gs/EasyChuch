@@ -46,12 +46,14 @@ export const exportReport = async (startDate: string, endDate: string) => {
 
   const rows: string[] = ['Type,Date,Category,Amount,Description,Created By'];
 
+  const escapeCsv = (val: string) => `"${val.replace(/"/g, '""')}"`;
+
   incomes.forEach((i) => {
-    rows.push(`Income,${i.date.toISOString().split('T')[0]},${i.category},${i.amount},"${i.description || ''}",${i.createdBy.name}`);
+    rows.push(`Income,${i.date.toISOString().split('T')[0]},${i.category},${i.amount},${escapeCsv(i.description || '')},${escapeCsv(i.createdBy.name)}`);
   });
 
   expenses.forEach((e) => {
-    rows.push(`Expense,${e.date.toISOString().split('T')[0]},${e.category},${e.amount},"${e.description || ''}",${e.createdBy.name}`);
+    rows.push(`Expense,${e.date.toISOString().split('T')[0]},${e.category},${e.amount},${escapeCsv(e.description || '')},${escapeCsv(e.createdBy.name)}`);
   });
 
   return rows.join('\n');

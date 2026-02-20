@@ -23,9 +23,12 @@ export const registerUser = async (
     select: { id: true, email: true, name: true, role: true, createdAt: true },
   });
 
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new AppError('Server configuration error', 500);
+
   const token = jwt.sign(
     { id: user.id, email: user.email, role: user.role },
-    process.env.JWT_SECRET || 'secret',
+    secret,
     { expiresIn: '7d' }
   );
 
@@ -43,9 +46,12 @@ export const loginUser = async (email: string, password: string) => {
     throw new AppError('Invalid credentials', 401);
   }
 
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new AppError('Server configuration error', 500);
+
   const token = jwt.sign(
     { id: user.id, email: user.email, role: user.role },
-    process.env.JWT_SECRET || 'secret',
+    secret,
     { expiresIn: '7d' }
   );
 
