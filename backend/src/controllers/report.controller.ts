@@ -28,8 +28,11 @@ export const exportReport = async (req: AuthRequest, res: Response, next: NextFu
     }
 
     const csv = await reportService.exportReport(startDate, endDate);
+    // Sanitize date strings to prevent header injection (allow only date characters)
+    const safeStart = startDate.replace(/[^0-9\-]/g, '');
+    const safeEnd = endDate.replace(/[^0-9\-]/g, '');
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename="easychurch-report-${startDate}-${endDate}.csv"`);
+    res.setHeader('Content-Disposition', `attachment; filename="easychurch-report-${safeStart}-${safeEnd}.csv"`);
     res.send(csv);
   } catch (err) {
     next(err);
